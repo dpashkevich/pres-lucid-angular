@@ -1,0 +1,767 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+
+        <title>Building an enterprise-grade app with AngularJS &mdash; by Dmitry Pashkevich</title>
+
+        <meta name="description" content="">
+        <meta name="author" content="Dmitry Pashkevich">
+
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <link rel="stylesheet" href="css/reveal.min.css">
+        <link rel="stylesheet" href="css/theme/white.css" id="theme">
+
+        <style type="text/less">
+            @font-face {
+                font-family: 'League Gothic';
+                src: url("../../lib/font/league_gothic-webfont.eot");
+                src: url("../../lib/font/league_gothic-webfont.eot?#iefix") format("embedded-opentype"), url("../../lib/font/league_gothic-webfont.woff") format("woff"), url(".    ../lib/font/league_gothic-webfont.ttf") format("truetype"), url("../../lib/font/league_gothic-webfont.svg#LeagueGothicRegular") format("svg");
+                font-weight: normal;
+                font-style: normal;
+            }
+
+            body {
+                background-image: url(img/lucid-molecule.png);
+                background-position: top right;
+                background-repeat: no-repeat;
+                background-size: 150px 150px;
+            }
+
+            .reveal {
+                color: #777;
+            }
+
+            .reveal h1,
+            .reveal h2,
+            .reveal h3,
+            .reveal h4,
+            .reveal h5,
+            .reveal h6 {
+                font-family: "League Gothic", Impact, sans-serif;
+                font-weight: normal;
+                line-height: 0.9em;
+                letter-spacing: 0.02em;
+                text-transform: uppercase;
+                color: #44546a;
+
+                .subheading {
+                    font-size: 0.6em;
+                    display: block;
+                }
+            }
+            .reveal h1 {
+                /*font-size: 3.77em;*/
+                font-size: 3em;
+            }
+            .reveal h2 {
+                font-size: 2.11em;
+            }
+            .reveal h3 {
+                font-size: 1.55em;
+            }
+            .reveal section img {
+                border: none;
+            }
+
+            .reveal .important {
+                color: orange;
+                font-family: "League Gothic", Impact, sans-serif;
+            }
+
+            .reveal strong {
+                color: #FF7A7A;
+            }
+
+            .reveal pre {
+                width: auto;
+                font-size: 0.4em;
+            }
+            .reveal code {
+                background: #3F3F3F;
+            }
+            .reveal code.inline {
+                font-size: 0.9em;
+                padding: 0 0.3em;
+            }
+
+            .reveal .code-columns {
+                display: flex;
+                align-items: stretch;
+
+                & > pre {
+                    flex: 1;
+                    margin-left: 10px;
+                    display: flex;
+                    align-items: stretch;
+
+                    &:first-child {
+                        margin-left: 0;
+                    }
+
+                    & > code {
+                        flex: 1;
+                        max-height: none;
+                    }
+                }
+            }
+
+            .lucid-orange,
+            .reveal .lucid-orange,
+            .reveal a.lucid-orange {
+            }
+
+            .reveal .lucid,
+            .reveal a.lucid {
+                color: #f78d1e;
+                font-weight: bold;
+            }
+            .reveal a.lucid:hover {
+                color: #8cbf3f;
+            }
+
+            .reveal .lucid-logo-container {
+                width: 100%;
+                padding: 1em 10%;
+                white-space: nowrap;
+                box-sizing: border-box;
+            }
+                .reveal .lucid-logo-container img {
+                    width: 45%;
+                }
+                .reveal .lucid-logo-container img,
+                .reveal .lucid-logo-container img:hover {
+                    border: none;
+                    background-color: transparent;
+                    box-shadow: none;
+                }
+
+            .reveal .column-container {
+                overflow: hidden;
+            }
+            .reveal .shrink-fit {
+                display: inline-block;
+            }
+            .reveal .column-left {
+                float: left;
+            }
+            .reveal .column-right {
+                float: right;
+            }
+
+            .reveal .remark {
+                font-style: italic;
+            }
+
+            /* dummy fragment class for custom effects */
+            .reveal .slides section .fragment-visible {
+                opacity: 1;
+            }
+
+            .angular-definition-note {
+                visibility: hidden;
+            }
+            .angular-definition-source {
+                text-align: right;
+                margin-top: 1em;
+            }
+            .angular-definition.current-fragment,
+            .angular-definition2.current-fragment {
+                .angular-definition-main,
+                .angular-definition-source {
+                    visibility: hidden;
+                }
+                .angular-definition-highlight {
+                    visibility: visible;
+                }
+            }
+            .angular-definition2.current-fragment {
+                .angular-definition-note {
+                    visibility: visible;
+                }
+            }
+        </style>
+
+        <script src="js/less.min.js"></script>
+
+        <!-- For syntax highlighting -->
+        <link rel="stylesheet" href="lib/css/zenburn.css">
+
+        <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+        <script>
+            if( window.location.search.match( /print-pdf/gi ) ) {
+                var link = document.createElement( 'link' );
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = 'css/print/pdf.css';
+                document.getElementsByTagName( 'head' )[0].appendChild( link );
+            }
+        </script>
+
+        <!--[if lt IE 9]>
+        <script src="lib/js/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+
+        <div class="reveal">
+
+            <!-- Any section element inside of this container is displayed as a slide -->
+            <div class="slides">
+                <section>
+                    <h1>Building an enterprise-grade app with AngularJS</h1>
+                    <p>
+                        <small>by <a href="http://dpashk.com" target="_blank">Dmitry Pashkevich</a></small>
+                    </p>
+                </section>
+
+                <section>
+                    <h2>About Me</h2>
+
+                    <div class="column-container shrink-fit" style="margin-top: 1em;">
+                        <div class="column-left" style="text-align: left">
+                            <p>Dmitry Pashkevich</p>
+                            <ul>
+                                <li>Internet citizen</li>
+                                <li>Passionate about web apps</li>
+                                <li>Love great user experience</li>
+                                <li>Engineer at <a class="lucid" href="http://www.lucidchart.com">Lucid Software</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="column-right" style="margin-left: 2em;">
+                            <img src="https://en.gravatar.com/userimage/42387280/7fc45b84ee87cfea3f334d470c5a41d6.jpg?size=200" alt="Dmitry Pashkevich"><br>
+                            <a href="http://dpashk.com">dpashk.com</a>
+                        </div>
+                    </div>
+
+                </section>
+
+                <section>
+                    <h2>
+                        <img src="img/lucid.png" alt="Lucid Software" style="box-shadow: none;">
+                    </h2>
+
+                    <div class="lucid-logo-container">
+                        <a href="http://www.lucidchart.com">
+                            <img src="img/chart.png" alt="Lucidchart" style="margin-right: 2em; box-shadow: none;">
+                        </a>
+                        <a href="http://www.lucidpress.com">
+                            <img src="img/press.png" alt="Lucidpress" style="box-shadow: none; position: relative; top: 16px;">
+                        </a>
+                    </div>
+
+                    <p style="display: none;">
+                        <strong>
+                            We're hiring!<br>
+                            <a href="https://www.golucid.co/" target="_blank">www.golucid.co</a>
+                        </strong>
+                    </p>
+                </section>
+
+                <section>
+                    <h3>Collaboration features</h3>
+
+                    <img src="img/chart-collaboration.png" alt="Real-time collaboration in Lucidchart">
+                </section>
+
+                <section>
+                    <h3>Team administration</h3>
+
+                    <img src="img/old-team-app-user-list.png" alt="Old team administration app in Lucidchart">
+                </section>
+
+                <section>
+                    <h2>Problem Statement</h2>
+                </section>
+
+                <section>
+                    <h3>Lucidchart Team Admin App</h3>
+
+                    <img src="img/old-team-app-settings.png" alt="Old team administration app in Lucidchart">
+                </section>
+
+                <section>
+                    <h3>Lucidchart Team Admin App</h3>
+
+                    <img src="img/old-team-app-saml.png" alt="Old team administration app in Lucidchart">
+                </section>
+
+                <section>
+                    <h3>Lucidchart Team Admin App</h3>
+
+                    <img src="img/old-team-app-license-requests.png" alt="Old team administration app in Lucidchart">
+                </section>
+
+                <section>
+                    <h3>Lucidchart Team Admin App</h3>
+
+                    <ul>
+                        <li class="fragment">UI and code didn’t scale with growing functionality</li>
+                        <li class="fragment">Multiple places to manage account features</li>
+                        <li class="fragment">Poor performance on large team accounts</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Solution: Redesign</h2>
+                </section>
+
+                <section>
+                    <h3>New Lucidchart Team Admin App</h3>
+
+                    <img src="img/new-team-app-user-list.png" alt="New team administration app in Lucidchart">
+                </section>
+
+                <section>
+                    <h2>We decided to use Angular</h2>
+                </section>
+
+                <section>
+                    <h3>Why Angular?</h3>
+
+                    <ul>
+                        <li class="fragment">Didn’t think too much about it</li>
+                        <li class="fragment">Popular, actively maintained</li>
+                        <li class="fragment">Supports modern web app principles</li>
+                        <li class="fragment">Known to work with Closure Compiler</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>What is Angular?</h3>
+
+                    <div class="fragment">
+                    <div class="fragment fragment-visible angular-definition">
+                    <div class="fragment fragment-visible angular-definition2">
+                        <p class="angular-definition-main">AngularJS is a new, powerful, client-side technology
+                            that provides a way of accomplishing really powerful things in a way that
+                            <strong class="angular-definition-highlight">embraces and extends HTML, CSS and JavaScript</strong>
+                        </p>
+
+                        <p class="angular-definition-source">
+                            <a href="http://code.tutsplus.com/tutorials/5-awesome-angularjs-features--net-25651">Source</a>
+                        </p>
+
+                        <p class="angular-definition-note remark" style="margin-top: 4em;">^ Evolution of existing Web Standards</p>
+                    </div>
+                    </div>
+                    </div>
+                </section>
+
+
+                <section>
+                    <h2>What Angular gives us
+                        <small class="important subheading">and how we use it</small>
+                    </h2>
+                </section>
+
+                <section>
+                    <h3>1. The MVC* pattern</h3>
+
+                    <p class="fragment">* actually, it’s MVVM (Model-View-ViewModel)**</p>
+
+                    <p class="fragment" style="margin-top: 1em;">** actually, it’s Model-View-<strong>Whatever</strong></p>
+                </section>
+
+                <section>
+                    <h3>1. The MVC* pattern</h3>
+
+                    <img src="img/mvw.png" style="border: none;" alt="Model-View-Whatever schematic">
+                </section>
+
+                <section>
+                    <h3>2. HTML Templates</h3>
+
+                    <ul>
+                        <li>Not a new language</li>
+                        <li class="fragment">Easy to author &amp; collaborate</li>
+                        <li class="fragment">Web Components ideology</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>2. HTML Templates</h3>
+
+                    <pre><code class="html">
+&lt;context-menu menu-name=&quot;context-menu-options&quot;&gt;
+  &lt;context-item
+    ng-repeat=&quot;option in options&quot;
+    item-click=&quot;combo.selectedIndex = $index&quot;&gt;
+      {{option.label}}
+  &lt;/context-item&gt;
+&lt;/context-menu&gt;
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h3>3. Two-way data binding</h3>
+
+                    <div style="position: relative;">
+                        <pre><code class="html">
+Your name: &lt;input type=&quot;text&quot; ng-model=&quot;firstName&quot;&gt;
+
+
+&lt;p&gt;Hello, {{firstName}}!&lt;/p&gt;
+
+
+&lt;!-- That&#39;s it! No JavaScript written here! --&gt;
+                        </code></pre>
+                        <div class="fragment" style="position: absolute; right: 0.5em; top: 1.4em;">
+                            <img src="img/model-view.gif" alt="Model-View schematic" style="border: none; margin: 0; background: none; box-shadow: none;" height="70">
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>4. Routing (Deep Linking)</h3>
+
+                    <img class="stretch" src="img/routing.png" alt="Deep Linking illustrated">
+                </section>
+
+                <section>
+                    <h3>4. Routing (Deep Linking)</h3>
+
+                    <div class="code-columns stretch">
+                        <pre><code class="js">
+$routeProvider.
+  when('/', {
+    templateUrl: '/view/MainView.html',
+    label: 'Admin'
+  }).
+  when('/users', {
+    templateUrl: '/view/UsersView.html',
+    label: 'Users'
+  }).
+  when('/users/create', {
+    templateUrl: '/view/CreateUsersView.html',
+    label: 'Add New'
+  })
+  // …
+                        </code></pre>
+
+                        <pre><code class="html">
+&lt;a href=&quot;#/users/create&quot;&gt;New user&lt;/a&gt;
+                        </code>
+                            <div style="position: absolute; left: 10px; top: 2em;">
+                                <img src="img/routing-button.png" alt="Deep Linking illustrated: new user button">
+                            </div>
+                        </pre>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>5. Dependency injection</h3>
+
+                    <div class="code-columns stretch">
+                        <pre><code class="js">
+// Define account service
+var AccountService = function() {
+    // account service constructor body...
+};
+
+AccountService.prototype.getAccount = function() {
+  // code for getting account...
+};
+
+
+// register it with Angular:
+TeamApp.service('accountService', AccountService);
+
+                        </code></pre>
+
+                        <pre><code class="js">
+// We need the account service
+// in our apps controller!
+var AppsController = function(accountService,
+  samlService, gappsService) {
+
+  // controller's constructor body...
+  var account = accountService.getAccount();
+}
+                        </code></pre>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>5. Dependency injection</h3>
+
+                    <ul>
+                        <li>Handles component discovery and import</li>
+                        <li class="fragment">Discourages use of globals</li>
+                        <li class="fragment">Loosely coupled modules</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>Recap: Angular Gives Us...</h3>
+
+                    <ol>
+                        <li>MVC</li>
+                        <li>HTML templates</li>
+                        <li>Two-way data binding</li>
+                        <li>Routing</li>
+                        <li>Dependency injection</li>
+                    </ol>
+                </section>
+
+
+                <section>
+                    <h2>What Angular doesn't give us
+                        <small class="important subheading">or what we've built</small>
+                    </h2>
+                </section>
+
+                <section>
+                    <h3>1. Code architecture</h3>
+
+                    <img class="stretch" src="img/architecture.png" alt="Code architecture">
+                </section>
+
+                <section>
+                    <h3>2. Code loading</h3>
+
+                    <div class="code-columns stretch">
+                        <pre style="flex: 1.5;"><code class="html">
+<!-- Development -->
+&lt;script src=&quot;/controller/LicensingController.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;/service/RestService.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;/model/UserRole.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;/model/User.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;/service/UserService.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;/model/License.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;/model/LicenseRequest.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;/model/Consumer.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;/model/Saml.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;/model/GAppsDomain.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;/model/Account.js&quot;&gt;&lt;/script&gt;
+...
+                        </code></pre>
+
+                        <pre><code class="html">
+<!-- Production -->
+&lt;script src=&quot;/teamAdmin.js&quot;&gt;&lt;/script&gt;
+                        </code></pre>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>3. Data model</h3>
+
+                    <pre class="stretch"><code class="js" data-trim>
+/**
+ * @constructor
+ * @param {lucid.services.RestLink} userLink
+ */
+lucid.team.model.User = function(userLink) {
+    this.selfLink = userLink;
+
+    /**
+     * @type {?string}
+     */
+    this.username = null;
+
+    /**
+     * @type {?string}
+     */
+    this.email = null;
+
+    /**
+     * @type {?Date}
+     */
+    this.created = null;
+}
+
+/**
+ * @param {string} productName
+ * @return {angular.$q.Promise}
+ */
+lucid.team.model.User.prototype.getDocuments = function() {
+    return lucid.team.model.UserDocuments.getUserDocuments(this);
+}
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h3>4. Server communication</h3>
+
+                    <div class="code-columns stretch">
+                        <pre><code class="json">
+{
+    "uri": "https://localhost/accounts/2",
+    "name": "My Team Name",
+    "owner": "https://localhost/accounts/2/owner",
+    "size": 54,
+    "users": "https://localhost/accounts/2/users",
+    "groups": "https://localhost/groups?accountId=2",
+    "roles": "https://localhost/userRoles?account=2",
+    "metadata": "https://localhost/accounts/2/metadata",
+    "created": "2014-06-23T17:30:53Z",
+    "updated": "2014-07-18T17:58:34Z"
+}
+                        </code></pre>
+
+                        <pre><code class="js">
+AccountService.prototype.accountUsers = function() {
+  return this.getAccount()
+    .then(function(account) {
+        return account.users.get();
+      }
+    );
+}
+
+
+RoleService.prototype.assignUserRole = function(
+userRow, roleName) {
+
+  return userRow.user.roles.post({
+    'role': this.getRoleID(roleName)
+  });
+}
+                        </code></pre>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>5. UI components</h3>
+
+                    <div class="code-columns stretch">
+                        <pre style="flex: 1.5"><code class="html">
+&lt;section class=&quot;filters-container&quot; id=&quot;filtersPanel&quot;&gt;
+  &lt;h2&gt;Products &amp;amp; Users&lt;/h2&gt;
+
+  &lt;combo-box model=&quot;currentProductFilter&quot; options=&quot;productFilterOptions&quot;&gt;
+  &lt;/combo-box&gt;
+  &lt;combo-box model=&quot;currentLicenseFilter&quot; options=&quot;licenseFilterOptions&quot;&gt;
+  &lt;/combo-box&gt;
+&lt;/section&gt;
+                        </code></pre>
+
+                        <pre><code class="less">
+.component-combo-box {
+  .component-pill-with-text;
+  .box-sizing(border-box);
+  line-height: 18px;
+
+  &amp;-primary-gray {
+    .component-combo-box-variant(
+      @component-primary-gray,
+      @component-primary-gray-hover
+    )
+  }
+
+  &amp;-secondary-gray {
+    .component-combo-box-variant(
+      @component-secondary-gray,
+      @component-secondary-gray-hover
+  }
+
+  ...
+}
+                        </code></pre>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Shipping to the world</h3>
+
+                    <img class="stretch" src="img/angular-features.png" alt="Angular.js features">
+                </section>
+
+                <section>
+                    <h2>Takeaways</h2>
+                </section>
+
+                <section>
+                    <h3>Should I use Angular?</h3>
+
+                    <ul>
+                        <li class="fragment">Probably</li>
+                        <li class="fragment">Not a monolithic framework</li>
+                        <li class="fragment">What is your current stack?</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>So how do I make a big app?</h3>
+
+                    <ul>
+                        <li class="fragment">You don't!</li>
+                        <li class="fragment">Develop small modules</li>
+                        <li class="fragment">Refactor the code as you go</li>
+                        <li class="fragment">Release parts of your  app regularly
+                            <img src="img/release-parts.png" alt="Release your app part by part">
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>Bonus: how do you make it fast?</h3>
+
+                    <ul>
+                        <li class="fragment">It probably already is!</li>
+                        <li class="fragment">Identify the bottleneck</li>
+                        <li class="fragment">It may not be inside Angular<br>
+                            <em>(e.g. network communication)</em>
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Thanks!</h2>
+
+                    <ul style="list-style-type: none;">
+                        <li><a href="https://www.golucid.co/">www.golucid.co</a>
+                        <li><a href="http://dpashkevich.github.io/pres-enforcingstandards/">http://dpashkevich.github.io/pres-lucid-angular/</a>
+                    </ul>
+
+                    <a href="https://www.golucid.co"><img src="img/lucid.png" alt="Lucid Software" style="box-shadow: none; width: 50%; margin-top: 2em;"></a>
+                </section>
+
+            </div>
+
+        </div>
+
+        <script src="lib/js/head.min.js"></script>
+        <script src="js/reveal.min.js"></script>
+
+        <script>
+
+            // Full list of configuration options available here:
+            // https://github.com/hakimel/reveal.js#configuration
+            Reveal.initialize({
+                controls: true,
+                progress: true,
+                history: true,
+                center: true,
+
+                theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+                transition: Reveal.getQueryHash().transition || 'none', // default/cube/page/concave/zoom/linear/fade/none
+
+                maxScale: 1.4,
+
+                // Parallax scrolling
+                // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+                // parallaxBackgroundSize: '2100px 900px',
+
+                // Optional libraries used to extend on reveal.js
+                dependencies: [
+                    { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+                    { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+                    { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+                    { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+                ]
+            });
+
+        </script>
+
+    </body>
+</html>
